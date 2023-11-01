@@ -6,13 +6,11 @@ import React, {useState} from 'react';
 function App() {
 
   let style = {color:'blue', fontSize : '30px'}
+  let titleStyle = {cursor: 'pointer'}
 
   let [title, changeTitle] = useState(['bitcoin is good', '으아아아', 'mina coin go up!']);
-  let [likeCountFirst, changeCountFirst] = useState(0);
-  let [likeCountSecond, changeCountSecond] = useState(0);
-  let [likeCountThird, changeCountThird] = useState(0);
-  let [arrayNum, arrayNumChange] = useState([100,1233,523]);
-
+  let [likeCount, changeCount] = useState([0,0,0]);
+  let [modal, setModal] = useState(false);
 
 
 
@@ -22,15 +20,26 @@ function App() {
     changeTitle(newArr);
   }
 
-  function sortTitleNumber(){
-    let sortedArray = [...arrayNum].sort((a,b) => a-b);
-    arrayNumChange(sortedArray);
+  // function sortTitleNumber(){
+  //   let sortedArray = [...arrayNum].sort((a,b) => a-b);
+  //   arrayNumChange(sortedArray);
+  // }
+
+  // function sortTitleNumberDown(){
+  //   let sortedArray = [...arrayNum].sort((a,b) => b-a);
+  //   arrayNumChange(sortedArray);
+  // }
+
+  
+
+  function increaseLikeCount(index){
+    let copyCount = [...likeCount];
+    copyCount[index] += 1;
+    changeCount(copyCount);
   }
 
-  function sortTitleNumberDown(){
-    let sortedArray = [...arrayNum].sort((a,b) => b-a);
-    arrayNumChange(sortedArray);
-  }
+
+
   
 
 
@@ -55,41 +64,78 @@ function App() {
       
       <button onClick={ btnChangeTitle }>글 제목 바꾸기</button> 
       <button onClick={sortTitle}>가나다순 정렬</button>
-      <button onClick={sortTitleNumber}>글 번호 오름차순 정렬</button>
-      <button onClick={sortTitleNumberDown}>글 번호 내림차순 정렬</button>
-      <div className="list">
+      {/* <button onClick={sortTitleNumber}>글 번호 오름차순 정렬</button>
+      <button onClick={sortTitleNumberDown}>글 번호 내림차순 정렬</button> */}
+
+
+      {/* <div className="list">
           <span> 글 번호 {arrayNum[0]}</span>
-          <h3>{title[0]} <span onClick={ () => {changeCountFirst(likeCountFirst + 1)} }>👍</span> {likeCountFirst} </h3>
+          <h3 style={titleStyle} onClick={() => {setModal(modal == true ? false:true)}}>{title[0]} <span onClick={ () => {changeCountFirst(likeCountFirst + 1)} }>👍</span> {likeCountFirst} </h3>
           <p>10월 31일</p>
           <hr/>
       </div>
 
       <div className="list">
           <span> 글 번호 {arrayNum[1]}</span>
-          <h3>{title[1]} <span onClick={ () => {changeCountSecond(likeCountSecond + 1)} }>👍</span> {likeCountSecond}</h3>
+          <h3 style={titleStyle} onClick={() => {setModal(!modal)}}>{title[1]} <span onClick={ () => {changeCountSecond(likeCountSecond + 1)} }>👍</span> {likeCountSecond}</h3>
           <p>10월 31일</p>
           <hr/>
       </div>
 
       <div className="list">
           <span> 글 번호 {arrayNum[2]}</span>
-          <h3>{title[2]} <span onClick={ () => {changeCountThird(likeCountThird + 1)} }>👍</span> {likeCountThird}</h3>
+          <h3 style={titleStyle} onClick={() => {setModal(modal == true ? false:true)}}>{title[2]} <span onClick={ () => {changeCountThird(likeCountThird + 1)} }>👍</span> {likeCountThird}</h3>
           <p>10월 31일</p>
           <hr/>
-      </div>
+      </div> */}
 
-      <Modal/>
+
+      {
+          title.map(function(a, i) {
+          return <div className="list" key={i}>
+            <span onClick={() => {setModal(modal == true ? false:true)}}> 글 번호 {i}</span>
+            <h3 style={titleStyle} > 
+              {a}
+              <span onClick={ () => {increaseLikeCount(i)} }>👍</span> {likeCount[i]}
+            </h3>
+            <p>10월 31일</p>
+            <hr/>
+          </div>
+        })
+      }
+
+    
+      
+
+      {
+        modal == true ? <Modal color = "yellow" changeTitle = {btnChangeTitle} title={title}/> : null
+      }
+
+      
+
+      
+
+      
+      {/* 동적인 UI 만들기 step
+        1. html, css로 미리 디자인 완성하기
+        2. UI의 현재 상태를 state로 저장
+        3. state에 따라 UI가 어떻게 보일지 작성(조건문) 
+        JSX에서는 if else를 바로 사용할 수 없다.
+        --> 삼항연산자를 사용하자
+        조건식 ? 참일 때 : 거짓일 때
+      */}
     
     </div>
   );
 }
 
-let Modal = () => {
+let Modal = (props) => {
   return(
-    <div className="modal">
-       <h2>글제목</h2>
+    <div className="modal" style={{background : props.color}}>
+       <h2>{props.title[0]}</h2>
        <p>날짜</p>
        <p>상세내용</p>
+       <button onClick={props.changeTitle}>제목 바꾸기 프롭스</button>
     </div>
   )
 }
